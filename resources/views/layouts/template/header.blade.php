@@ -6,6 +6,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('template/css/style.css') }}">
     <title>{{ config('app.name', 'Laravel') }} - @yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    {{-- <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" /> --}}
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
