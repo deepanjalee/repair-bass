@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('nic')->nullable();
-            $table->string('salary_per_day')->nullable();
+            $table->double('salary_per_day', 8, 2)->nullable();
             $table->enum('user_type', UserType::getValues());
             $table
                 ->boolean('active')

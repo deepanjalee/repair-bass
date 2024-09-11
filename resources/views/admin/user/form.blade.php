@@ -33,7 +33,11 @@
                     </div> --}}
 
 
+                    @if($update ==false)
                     @livewire('admin.user.user-add')
+                    @else
+                    @livewire('admin.user.user-add', ['user' => $object])
+                    @endif
 
 
 

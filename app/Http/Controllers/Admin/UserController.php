@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,7 +49,13 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        //
+        $this->data['object'] = $user;
+        $this->data['page_name'] = $this->name . ' Update';
+        $this->data['route'] = route($this->routeName . '.update', $user);
+        $this->data['user_types'] = UserType::asSelectArray();
+        $this->data['update'] = true;
+        $this->data['btn_name'] = $this->name . ' Manage';
+        return view($this->viewName . '.form', $this->data);
     }
 
     public function edit(User $user)
