@@ -27,7 +27,15 @@ class UserController extends Controller
 
     public function index()
     {
-        //
+        // $this->data['objects'] = $users
+        //     ->paginate(env('PAGINATION'))
+        //     ->appends(request()->query());
+        $this->data['page_name'] = $this->name . ' Manage';
+        $this->data['btn_route_edit'] = $this->routeName . '.show';
+        $this->data['btn_route_delete'] = $this->routeName . '.destroy';
+        $this->data['btn_name'] = $this->name . ' Add';
+        $this->data['btn_route'] = route($this->routeName . '.create');
+        return view($this->viewName . '.index', $this->data);
     }
 
     public function create()
@@ -71,5 +79,9 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+    public function layout(User $user)
+    {
+        return view('layouts.main_layout');
     }
 }

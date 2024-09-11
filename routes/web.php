@@ -33,6 +33,10 @@ Route::get('/', function () {
 // });
 Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+        Route::get('/main_layout', function () {
+            return view('layouts.main_layout');
+        });
+
         Route::resource('users', UserController::class);
     });
 });
