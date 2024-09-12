@@ -12,11 +12,12 @@
                 <div class="card-body">
                     <div class="flex flex-row justify-between items-center">
                         <h1 class="font-extrabold text-lg text-gray-500">{{ $page_name }}</h1>
-                        {{-- <a href="#" class="btn-gray text-sm">view all</a> --}}
-                        <a href="#" class="btn-bs-primary">{{ $btn_name }}</a>
+
+                        <a type="button" href="{{ route('admin.users.create') }}"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">{{ $btn_name }}</a>
                     </div>
 
-                    {{-- @if($update ==false)
+                    {{-- @if ($update == false)
                     @livewire('admin.user.user-add')
                     @else
                     @livewire('admin.user.user-add', ['user' => $object])

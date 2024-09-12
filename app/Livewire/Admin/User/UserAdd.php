@@ -10,24 +10,26 @@ use Livewire\Component;
 
 class UserAdd extends Component
 {
-    #[Rule('required|min:3|max:50')]
+    public $editMode = false;
+
+    // #[Rule('required|min:3|max:50')]
     public $first_name;
-    #[Rule('required|min:3|max:50')]
+    // #[Rule('required|min:3|max:50')]
     public $last_name;
-    #[Rule('required|email|unique:users')]
+    // #[Rule('required|email|unique:users')]
     public $email;
-    #[Rule('required|min:3|max:10')]
+    // #[Rule('required|min:3|max:10')]
     public $password;
-    #[Rule('required|required_if:user_type,==,2')]
+    // #[Rule('required|required_if:user_type,==,2')]
     public $nic;
     public $user_types;
-    #[Rule('required')]
+    // #[Rule('required')]
     public $user_type;
-    #[Rule('required|required_if:user_type,==,2')]
+    // #[Rule('required|required_if:user_type,==,2')]
     public $salary_per_day;
 
-    public $editMode = false;
     public $userId;
+    public $hidden = true;
 
     public function mount($user = null)
     {
@@ -44,27 +46,44 @@ class UserAdd extends Component
         }
     }
 
+    public function userTypeChange()
+    {
+        if ($this->user_type == UserType::EMPLOYEE) {
+            $this->hidden = false;
+            // dd($this->hidden, $this->user_type);
+        }
+        if ($this->user_type != UserType::EMPLOYEE) {
+            $this->hidden = true;
+        }
+    }
+
     public function storeUser()
     {
-        $validated = $this->validate();
-
-        // dd($validated);
+        //  dd($this->user_type);
 
         if ($this->editMode) {
-            // Update existing user
             $user = User::find($this->userId);
+
+            $validated = $this->validate([
+                'first_name' => 'required|min:3|max:50',
+                'last_name' => 'nullable|max:50',
+                'email' => 'required|email|unique:users,email,' . $this->userId,
+                'user_type' => 'required',
+                'salary_per_day' => 'required_if:user_type,==,2',
+                'nic' => 'required_if:user_type,==,2',
+            ]);
 
             $user->update([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'user_type' => $validated['user_type'],
-                'salary_per_day' => $validated['salary_per_day'],
-                'nic' => $validated['nic'],
+                'salary_per_day' => $validated['salary_per_day'] ?? null,
+                'nic' => $validated['nic'] ?? null,
             ]);
-            // dd($validated['password'] != 'xxxxxxxx');
-            if ($validated['password'] != 'xxxxxxxx') {
-                $password = Hash::make($validated['password']);
+
+            if ($this->password != 'xxxxxxxx') {
+                $password = Hash::make($this->password);
                 $user->update([
                     'password' => $password,
                 ]);
@@ -72,6 +91,16 @@ class UserAdd extends Component
 
             session()->flash('success', 'User Updated Successfully.');
         } else {
+            $validated = $this->validate([
+                'first_name' => 'required|min:3|max:50',
+                'last_name' => 'max:50',
+                'password' => 'required|min:6|max:10',
+                'email' => 'required|email|unique:users',
+                'user_type' => 'required',
+                'salary_per_day' => 'required_if:user_type,==,2',
+                'nic' => 'required_if:user_type,==,2',
+            ]);
+
             $user = User::create([
                 'name' => $validated['first_name'],
                 'first_name' => $validated['first_name'],
