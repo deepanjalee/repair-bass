@@ -15,14 +15,26 @@ class UserView extends Component
     {
         $user = User::where('id', $id)->first();
         $status = $user->active;
+        $icon = 'success';
         if ($status == 1) {
             $user->active = false;
+            $status_name = 'Deactivated';
+
         }
-        if ($status == 1) {
+        if ($status == 0) {
             $user->active = true;
+            $status_name = 'Activated';
         }
         $user->save();
-        dd($user);
+
+        $this->dispatch(
+            'sweetalert',
+            title : 'User ' . $status_name . ' Successfully.',
+            icon : $icon,
+            timer : 2000,
+            position : 'top-end',
+        );
+        // dd($user);
     }
     public function render()
     {
