@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Arr;
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -62,5 +65,46 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = ['profile_photo_url'];
+    protected $appends = [
+        'profile_photo_url',
+        'profile_image_url',
+        'user_type_name',
+        'status_name',
+    ];
+
+    public function getProfileImageUrlAttribute()
+    {
+        $directory = public_path('img/profile');
+        $files = File::allFiles($directory);
+        $imageNames = collect($files)
+            ->filter(function ($file) {
+                return in_array($file->getExtension(), [
+                    'jpg',
+                    'jpeg',
+                    'png',
+                    'gif',
+                    'bmp',
+                    'webp',
+                ]);
+            })
+            ->map(function ($file) {
+                $url = '/img/profile/' . $file->getFilename();
+                return $url;
+            })
+            ->toArray();
+
+        //dd(Arr::random($imageNames));
+        return Arr::random($imageNames);
+    }
+
+    public function getUserTypeNameAttribute()
+    {
+        $user_type_name = UserType::getKey(intval($this->user_type));
+        return str_replace('_', ' ', strtolower($user_type_name));
+    }
+
+    public function getStatusNameAttribute()
+    {
+        return $this->active == 1 ? 'Activated' : 'Deactivated';
+    }
 }
