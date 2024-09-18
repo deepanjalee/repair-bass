@@ -32,6 +32,19 @@
             </div>
             <div class="w-full md:w-1/2 px-3 mb-3 md:mb-0">
                 <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
+                    Mobile
+                </label>
+                <x-input-new id="mobile" class="block w-full  {{ $errors->has('mobile') ? 'border-red-500' : '' }}"
+                    type="text" name="mobile" :value="old('mobile')" autofocus placeholder="Mobile"
+                    wire:model="mobile" />
+
+                @error('mobile')
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span
+                            class="font-medium">{{ $message }}</span> </p>
+                @enderror
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-3 md:mb-0">
+                <label class="block tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
                     Email
                 </label>
                 <x-input-new id="email" class="block w-full  {{ $errors->has('email') ? 'border-red-500' : '' }}"

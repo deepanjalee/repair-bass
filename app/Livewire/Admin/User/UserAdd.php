@@ -28,6 +28,8 @@ class UserAdd extends Component
     // #[Rule('required|required_if:user_type,==,2')]
     public $salary_per_day;
 
+    public $mobile;
+
     public $userId;
     public $hidden = true;
 
@@ -41,6 +43,7 @@ class UserAdd extends Component
             $this->email = $user->email;
             $this->user_type = $user->user_type;
             $this->salary_per_day = $user->salary_per_day;
+            $this->mobile = $user->mobile;
             $this->password = 'xxxxxxxx';
             $this->nic = $user->nic;
         }
@@ -67,6 +70,7 @@ class UserAdd extends Component
             $validated = $this->validate([
                 'first_name' => 'required|min:3|max:50',
                 'last_name' => 'nullable|max:50',
+                'mobile' => 'required|min:9|max:11',
                 'email' => 'required|email|unique:users,email,' . $this->userId,
                 'user_type' => 'required',
                 'salary_per_day' => 'required_if:user_type,==,2',
@@ -76,6 +80,7 @@ class UserAdd extends Component
             $user->update([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
+                'mobile' => $validated['mobile'],
                 'email' => $validated['email'],
                 'user_type' => $validated['user_type'],
                 'salary_per_day' => $validated['salary_per_day'] ?? null,
@@ -94,6 +99,7 @@ class UserAdd extends Component
             $validated = $this->validate([
                 'first_name' => 'required|min:3|max:50',
                 'last_name' => 'max:50',
+                'mobile' => 'required|min:9|max:11',
                 'password' => 'required|min:6|max:10',
                 'email' => 'required|email|unique:users',
                 'user_type' => 'required',
@@ -118,7 +124,8 @@ class UserAdd extends Component
                 'password',
                 'user_type',
                 'salary_per_day',
-                'nic'
+                'nic',
+                'mobile'
             );
             session()->flash('success', 'User Added Successfully.');
         }

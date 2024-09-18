@@ -37,6 +37,8 @@ class User extends Authenticatable
         'user_type',
         'salary_per_day',
         'nic',
+        'mobile',
+        'active',
     ];
 
     /**
