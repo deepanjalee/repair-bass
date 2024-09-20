@@ -1,5 +1,11 @@
 import './bootstrap'
 import Swal from 'sweetalert2'
+import { createApp } from 'vue'
+import TestComponent from './components/TestComponent.vue'
+
+const app = createApp()
+
+app.component('test-component', TestComponent)
 
 window.addEventListener('sweetalert', (event) => {
   let data = event.detail
@@ -11,3 +17,5 @@ window.addEventListener('sweetalert', (event) => {
     timer: data.timer,
   })
 })
+
+app.mount('#app')
