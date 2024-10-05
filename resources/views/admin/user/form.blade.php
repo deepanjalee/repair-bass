@@ -6,7 +6,7 @@
     <div class="container">
 
 
-        <div class="grid grid-cols-1 lg:grid-cols-1 gap-5 mt-2">
+        {{-- <div class="grid grid-cols-1 lg:grid-cols-1 gap-5 mt-2">
             <div class="card">
 
                 <div class="card-body">
@@ -32,9 +32,9 @@
                 </div>
             </div>
 
-        </div>
+        </div> --}}
 
-        <test-component></test-component>
+        <user-add-update :page_name="{{ $page_name }}"></user-add-update>
 
 
     </div>

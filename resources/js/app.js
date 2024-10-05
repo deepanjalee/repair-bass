@@ -1,11 +1,11 @@
 import './bootstrap'
 import Swal from 'sweetalert2'
 import { createApp } from 'vue'
-import TestComponent from './components/TestComponent.vue'
+import UserAddUpdate from './components/UserAddUpdate.vue'
 
 const app = createApp()
 
-app.component('test-component', TestComponent)
+app.component('user-add-update', UserAddUpdate)
 
 window.addEventListener('sweetalert', (event) => {
   let data = event.detail
