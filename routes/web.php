@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,8 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::resource('users', UserController::class);
+        Route::get('/items/pdf', [ItemController::class,'downloadPdf']);
         Route::resource('items', ItemController::class);
+        Route::resource('customers', CustomerController::class);
     });
 });

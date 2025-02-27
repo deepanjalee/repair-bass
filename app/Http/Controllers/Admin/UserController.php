@@ -52,7 +52,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        $user = User::create($request->all());
     }
 
     public function show(User $user)
