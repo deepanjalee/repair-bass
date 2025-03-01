@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\ItemRequest;
 use App\Models\Admin\Brand;
 use App\Models\Admin\Item;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ItemController extends Controller
 {
@@ -99,4 +100,14 @@ class ItemController extends Controller
             $this->name . ' Delete Successfully.'
         );
     }
+    // public function downloadPdf()
+    // {
+    //    $items = Item::get();
+    //   return view('admin.item.pdf', compact('items'));
+
+
+    // // $pdf = Pdf::loadView('admin.item.pdf',  ['items' => $items]);
+    // // return $pdf->stream('invoice.pdf');
+    // // return $pdf->download('invoice.pdf');
+    // }
 }

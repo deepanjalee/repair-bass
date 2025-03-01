@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\CustomerRequest;
 use App\Models\Admin\Customer;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
        //dd($request->all());
        $customer = Customer::create($request->all());
@@ -89,7 +90,7 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Customer $customer)
+    public function update(CustomerRequest $request, Customer $customer)
     {
         $customer->update($request->all());
         return redirect(route($this->routeName . '.index'))->with(

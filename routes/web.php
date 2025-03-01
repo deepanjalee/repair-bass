@@ -44,4 +44,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('items', ItemController::class);
         Route::resource('customers', CustomerController::class);
     });
+    Route::group(['prefix' => 'site', 'as' => 'site.'], function () {
+
+    });
 });

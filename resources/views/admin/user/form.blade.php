@@ -34,7 +34,10 @@
 
         </div> --}}
 
-        <user-add-update :page_name="{{ $page_name }}"></user-add-update>
+        <user-add-update
+        :page-name="'{{ $page_name }}'"
+        :btn-name="'{{ $btn_name }}'"
+        ></user-add-update>
 
 
     </div>
