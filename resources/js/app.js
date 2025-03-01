@@ -2,6 +2,7 @@ import './bootstrap'
 import Swal from 'sweetalert2'
 import { createApp } from 'vue'
 import UserAddUpdate from './components/UserAddUpdate.vue'
+import QuotationAddUpdate from './components/QuotationAddUpdate.vue'
 import axios from 'axios';
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -9,6 +10,7 @@ axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[nam
 const app = createApp()
 
 app.component('user-add-update', UserAddUpdate)
+app.component('quotation-add-update', QuotationAddUpdate)
 
 
 window.addEventListener('sweetalert', (event) => {

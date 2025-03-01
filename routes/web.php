@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ItemController;
+use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\QuotationController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,8 +45,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/items/pdf', [ItemController::class,'downloadPdf']);
         Route::resource('items', ItemController::class);
         Route::resource('customers', CustomerController::class);
+        Route::resource('sites', SiteController::class);
     });
-    Route::group(['prefix' => 'site', 'as' => 'site.'], function () {
-
+    Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
+        Route::resource('quotations', QuotationController::class);
     });
 });
