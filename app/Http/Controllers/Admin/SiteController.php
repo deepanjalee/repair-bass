@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SiteRequest;
+use App\Http\Resources\Admin\SiteSelectResource;
 use App\Models\Admin\Customer;
 use App\Models\Admin\Site;
 use Illuminate\Http\Request;
@@ -97,5 +98,11 @@ class SiteController extends Controller
             'danger',
             $this->name . ' Delete Successfully.'
         );
+    }
+    public function getSitesByCustomerId($customer_id)
+    {
+        //dd($customer_id);
+        $sites = Site::where('customer_id', $customer_id)->get();
+        return SiteSelectResource::collection($sites);
     }
 }
