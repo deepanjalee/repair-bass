@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Customer\QuotationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/users', [UserController::class, 'store']);
     });
+
 });
 
+Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
+    Route::post('/quotations', [QuotationController::class, 'store']);
+});
 Route::get('/admin/customer/sites/{customer_id}', [SiteController::class, 'getSitesByCustomerId']);

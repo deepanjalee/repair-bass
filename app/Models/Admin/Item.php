@@ -18,8 +18,13 @@ class Item extends Model
         'description',
     ];
 
+    protected $appends = ['item_name'];
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
+     public function getItemNameAttribute(){
+        return  $this->name . " - " .  optional($this->brand)->name . " - " . $this->length;
+     }
 }

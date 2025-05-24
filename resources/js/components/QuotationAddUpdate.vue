@@ -15,7 +15,7 @@
                     </a>
                 </div>
 
-                <form @submit.prevent="saveCompany">
+                <form @submit.prevent="saveQuotation">
                     <div class="grid grid-cols-2 gap-4 mt-5">
                         <div>
                             <label
@@ -29,6 +29,7 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Quotation Number"
                                 v-model="form.quotation_number"
+                                disabled
                             />
                         </div>
                         <div>
@@ -58,6 +59,20 @@
                                 placeholder="Select Site"
                                 :reduce="(site) => site.id"
                                 :options="sites.data"
+                            ></v-select>
+                        </div>
+                        <div>
+                            <label
+                                for="quotation_number"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Discount Type</label
+                            >
+                            <v-select
+                                label="name"
+                                v-model="form.discount_type"
+                                placeholder="Select Dicount Type"
+                                :reduce="(discountType) => discountType.id"
+                                :options="discountTypes"
                             ></v-select>
                         </div>
                         <div>
@@ -106,6 +121,320 @@
                             ></textarea>
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-1 gap-4 mt-5 mb-5">
+                        <section>
+                            <div>
+                                <!-- Start coding here -->
+                                <div
+                                    class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden"
+                                >
+                                    <div
+                                        class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4"
+                                    >
+                                        <div class="mt-2">
+                                            <h5>Add Item</h5>
+                                        </div>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table
+                                            class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                                        >
+                                            <thead
+                                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                                            >
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3"
+                                                        style="width: 30%"
+                                                    >
+                                                        Item
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3"
+                                                    >
+                                                        Price
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3"
+                                                    >
+                                                        Quantity
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3"
+                                                    >
+                                                        Total
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3"
+                                                    >
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    class="border-b dark:border-gray-700"
+                                                >
+                                                    <td class="px-4 py-3">
+                                                        <v-select
+                                                            label="name"
+                                                            v-model="
+                                                                item.item_id
+                                                            "
+                                                            placeholder="Select Product"
+                                                            :reduce="
+                                                                (product) =>
+                                                                    product.id
+                                                            "
+                                                            :options="products"
+                                                            @update:modelValue="
+                                                                setProductDetails
+                                                            "
+                                                        ></v-select>
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        <input
+                                                            v-model="item.price"
+                                                            type="number"
+                                                            id="price"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="Price"
+                                                            @input="
+                                                                formatPriceInput
+                                                            "
+                                                            min="0"
+                                                        />
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        <input
+                                                            v-model="
+                                                                item.quantity
+                                                            "
+                                                            type="number"
+                                                            id="quantity"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="Quantity"
+                                                            min="1"
+                                                            @input="
+                                                                validateQuantity
+                                                            "
+                                                        />
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        <input
+                                                            :value="
+                                                                formatCurrency(
+                                                                    item.total
+                                                                )
+                                                            "
+                                                            type="text"
+                                                            id="total"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="total"
+                                                            disabled
+                                                        />
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-3 flex items-center justify-end"
+                                                    ></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <div class="mx-4 my-2">
+                                                            <textarea
+                                                                name="description"
+                                                                cols="30"
+                                                                rows="3"
+                                                                placeholder="Description"
+                                                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            ></textarea>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                                            @click="addItem"
+                                                        >
+                                                            <svg
+                                                                class="w-6 h-6 text-white"
+                                                                aria-hidden="true"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="24"
+                                                                height="24"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    stroke="currentColor"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M5 12h14m-7 7V5"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr
+                                                    v-for="(
+                                                        item, index
+                                                    ) in form.items"
+                                                    :key="index"
+                                                    class="border-b dark:border-gray-700"
+                                                >
+                                                    <td class="px-4 py-3">
+                                                        {{ item.item_name }}
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        {{
+                                                            formatCurrency(
+                                                                item.price
+                                                            )
+                                                        }}
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        {{ item.quantity }}
+                                                    </td>
+                                                    <td class="px-4 py-3">
+                                                        LKR
+                                                        {{
+                                                            formatCurrency(
+                                                                item.total
+                                                            )
+                                                        }}
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-3 flex items-center justify-end"
+                                                    ></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="overflow-x-auto mt-4">
+                                        <table
+                                            class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                                        >
+                                            <thead
+                                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                                            >
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        Sub Total:
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        LKR
+                                                        {{
+                                                            formatCurrency(
+                                                                form.sub_total
+                                                            )
+                                                        }}
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        Discount:
+                                                        <br />
+                                                        <label
+                                                            for=""
+                                                            class="text-red-400"
+                                                            v-if="
+                                                                form.discount_type ==
+                                                                ''
+                                                            "
+                                                            >* Please Select
+                                                            Discount Type
+                                                            first</label
+                                                        >
+                                                    </th>
+                                                    <td
+                                                        style="width: 30%"
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        <input
+                                                            v-if="
+                                                                form.discount_type ==
+                                                                1
+                                                            "
+                                                            :disabled="
+                                                                form.discount_type ===
+                                                                ''
+                                                            "
+                                                            type="number"
+                                                            v-model="
+                                                                form.discount
+                                                            "
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="Discount"
+                                                        />
+                                                        <input
+                                                            v-if="
+                                                                form.discount_type ==
+                                                                2
+                                                            "
+                                                            :disabled="
+                                                                form.discount_type ===
+                                                                ''
+                                                            "
+                                                            type="number"
+                                                            v-model="
+                                                                form.discount_percentage
+                                                            "
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="Discount"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        Total:
+                                                    </th>
+                                                    <td
+                                                        style="width: 30%"
+                                                        scope="col"
+                                                        class="px-4 py-3 text-right"
+                                                    >
+                                                        <input
+                                                            type="text"
+                                                            :value="
+                                                                formatCurrency(
+                                                                    form.total
+                                                                )
+                                                            "
+                                                            disabled
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                            placeholder="Total"
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                     <div>
                         <button
                             type="submit"
@@ -120,7 +449,7 @@
     </div>
 </template>
 <script>
-import { reactive } from "vue";
+import { reactive, computed, watch } from "vue";
 
 import useQuotations from "../components/composables/quotations";
 import vSelect from "vue-select";
@@ -134,6 +463,10 @@ export default {
             type: String,
             required: true,
         },
+        quotationNumber: {
+            type: String,
+            required: true,
+        },
         btnName: {
             type: String,
             required: true,
@@ -142,32 +475,129 @@ export default {
             type: Array,
             required: true,
         },
+        products: {
+            type: Array,
+            required: true,
+        },
+        discountTypes: {
+            type: Array,
+            required: true,
+        },
+        update: {
+            type: Boolean,
+            required: true,
+        },
+
+        quotation: {
+            type: Object,
+            default: () => ({}),
+        },
     },
     components: {
         vSelect,
         Datepicker,
     },
 
-    setup() {
+    setup(props) {
         const form = reactive({
-            quotation_number: "",
+            quotation_number: props.quotationNumber,
             customer_id: "",
             site_id: "",
             date: new Date(),
-            sub_total: "",
-            discount: "",
+            sub_total: 0,
+            discount: 0,
+            discount_percentage: 0,
             discount_type: "",
-            vat: "",
-            total: "",
+            vat: 0,
+            total: 0,
             description: "",
             remarks: "",
+            items: [],
+        });
+        const item = reactive({
+            item_id: "",
+            item_name: "",
+            price: null,
+            quantity: null,
+            total: 0,
+            description: "",
         });
 
-        const { errors, onSubmit, sites, loading, fetchSites } =
-            useQuotations();
+        const {
+            errors,
+            onSubmit,
+            sites,
+            loading,
+            fetchSites,
+            fetchProductDetails,
+            addItemDetails,
+            calculateSubTotal,
+            calculateTotal,
+        } = useQuotations();
 
-        const getSitesByCustomer = (customerId) => {
-            fetchSites(customerId); // Call API to load sites
+        const getSitesByCustomer = (customerId ) => {
+            fetchSites(customerId);
+            // form.site_id = "";
+        };
+
+        const subTotal = computed(() => calculateSubTotal(form.items));
+        watch(subTotal, (newVal) => {
+            form.sub_total = newVal;
+        });
+
+        const total = computed(() => calculateTotal(form));
+        watch(total, (newVal) => {
+            form.total = newVal;
+        });
+        watch(
+            () => [item.price, item.quantity],
+            () => {
+                if (item.price && item.quantity) {
+                    item.total = item.price * item.quantity;
+                } else {
+                    item.total = 0;
+                }
+            },
+            { immediate: true }
+        );
+
+        watch(
+            () => props.update,
+            (val) => {
+                if (val && props.quotation) {
+                    form.quotation_number =
+                        props.quotation.quotation_number || "";
+                    form.customer_id = props.quotation.customer_id || "";
+                    form.site_id = props.quotation.site_id || "";
+                    form.date = props.quotation.date
+                        ? new Date(props.quotation.date)
+                        : new Date();
+                    form.sub_total = props.quotation.sub_total || 0;
+                    form.discount = props.quotation.discount || "";
+                    form.discount_type = props.quotation.discount_type || "";
+                    form.vat = props.quotation.vat || 0;
+                    form.total = props.quotation.total || 0;
+                    form.description = props.quotation.description || "";
+                    form.remarks = props.quotation.remarks || "";
+                    form.items = props.quotation.items
+                        ? JSON.parse(JSON.stringify(props.quotation.items))
+                        : [];
+
+                    if (form.customer_id) {
+                        getSitesByCustomer(form.customer_id);
+                    }
+                }
+            },
+            { immediate: true }
+        );
+
+        const setProductDetails = (itemId) => {
+            fetchProductDetails(itemId, props.products, item);
+        };
+
+        // Add item to the form
+        const addItem = () => {
+            addItemDetails(item, form);
         };
 
         const saveQuotation = async () => {
@@ -178,6 +608,50 @@ export default {
             return format(date, "yyyy-MM-dd"); // Formats date as 2025-02-25
         };
 
+        const formatCurrency = (value) => {
+            if (value == null) return "0.00";
+            return Number(value).toLocaleString("en-LK", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        };
+
+        const formatPriceInput = (event) => {
+            // Remove any non-numeric characters except decimal point
+            let value = event.target.value.replace(/[^\d.]/g, "");
+
+            // Ensure only one decimal point
+            const parts = value.split(".");
+            if (parts.length > 2) {
+                value = parts[0] + "." + parts.slice(1).join("");
+                console.log("value parts", value);
+            }
+
+            // Format the number with thousand separators and 2 decimal places
+            if (value) {
+                const num = parseFloat(value);
+                if (!isNaN(num) && num >= 0) {
+                    // Only allow non-negative values
+                    // Update total when price changes
+                    if (item.quantity) {
+                        item.total = num * item.quantity;
+                    }
+                    item.price = num;
+                }
+            }
+        };
+
+        const validateQuantity = (event) => {
+            const value = parseInt(event.target.value);
+            if (value < 1) {
+                item.quantity = 1; // Set minimum value to 1
+            }
+            // Update total when quantity changes
+            if (item.price) {
+                item.total = item.price * item.quantity;
+            }
+        };
+
         return {
             form,
             saveQuotation,
@@ -185,6 +659,12 @@ export default {
             sites,
             loading,
             formatDate,
+            item,
+            setProductDetails,
+            addItem,
+            formatCurrency,
+            formatPriceInput,
+            validateQuantity,
         };
     },
 };

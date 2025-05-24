@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('sites', SiteController::class);
     });
     Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
+        Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'pdf'])->name('quotations.pdf');
         Route::resource('quotations', QuotationController::class);
     });
 });

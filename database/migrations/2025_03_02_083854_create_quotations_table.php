@@ -18,16 +18,18 @@ return new class extends Migration
             $table->foreignId('site_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->double('sub_total', 20, 2);
-            $table->double('discount', 10, 2);
+            $table->double('discount', 20, 2);
+            $table->double('discount_percentage', 10, 2);
             $table->integer('discount_type')->default(1);
             $table->double('vat', 10, 2);
             $table->double('total', 20, 2);
             $table->longText('description')->nullable();
             $table->longText('remarks')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::statement('ALTER TABLE quotations AUTO_INCREMENT = 100;');
     }
 
     /**
