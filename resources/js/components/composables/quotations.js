@@ -12,7 +12,7 @@ export default function useQuotations() {
     const onSubmit = async (data) => {
         errors.value = "";
         try {
-            const response = await axios.post('/api/customer/quotations', data);
+            const response = await axios.post("/api/customer/quotations", data);
             if (response.data.status && response.data.redirect_url) {
                 window.location.href = response.data.redirect_url;
             }
@@ -30,14 +30,14 @@ export default function useQuotations() {
                 `/api/admin/customer/sites/${customerId}`
             );
             sites.value = response.data;
-            console.log("sites", sites.value, form);
-
         } catch (error) {
             console.error("Error fetching sites:", error);
+            sites.value = []; // Reset sites on error
         } finally {
             loading.value = false;
         }
     };
+   
     const fetchProductDetails = async (itemId, products, item) => {
         // try {
         const selectedProduct = products.find(
@@ -58,9 +58,11 @@ export default function useQuotations() {
         if (form.discount_type == 1) {
             // Flat discount
             discount = Number(form.discount || 0);
+            form.discount = discount;
         } else if (form.discount_type == 2) {
             // Percentage discount
             discount = subTotal * (Number(form.discount_percentage || 0) / 100);
+            form.discount = discount;
         }
 
         return subTotal - discount;
@@ -68,7 +70,9 @@ export default function useQuotations() {
 
     const addItemDetails = (item, form) => {
         // Find the item if it already exists
-        const existingItem = form.items.find(existing => existing.item_id === item.item_id);
+        const existingItem = form.items.find(
+            (existing) => existing.item_id === item.item_id
+        );
 
         if (existingItem) {
             // If exists, update the quantity and total
@@ -83,7 +87,7 @@ export default function useQuotations() {
                 price: item.price,
                 quantity: item.quantity,
                 total: item.total,
-                description: item.description
+                description: item.description,
             });
         }
 
@@ -99,10 +103,7 @@ export default function useQuotations() {
         // form.sub_total = form.items.reduce((acc, item) => {
         //     return acc + (item.price * item.quantity);
         // }, 0);
-
-
     };
-
 
     return {
         onSubmit,

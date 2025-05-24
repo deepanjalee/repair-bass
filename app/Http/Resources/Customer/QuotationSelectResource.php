@@ -22,6 +22,7 @@ class QuotationSelectResource extends JsonResource
             'site_id' => intval($this->site_id) ?? '',
             'date' => $this->date,
             'discount' => $this->discount,
+            'discount_percentage' => $this->discount_percentage,
             'discount_type' => intval($this->discount_type),
             'vat' => $this->vat,
             'total' => $this->total,

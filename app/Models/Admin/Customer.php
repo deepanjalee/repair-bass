@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin;
 
+use App\Models\Customer\Quotation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,4 +17,12 @@ class Customer extends Model
         'address',
         'description',
     ];
+    public function sites()
+    {
+        return $this->hasMany(Site::class);
+    }
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
 }

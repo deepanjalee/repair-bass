@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Customer;
 
 use App\Enums\DiscountType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QuotatioStorenRequest;
 use App\Http\Resources\Admin\CustomerSelectResourse;
 use App\Http\Resources\Admin\ItemSelectResource;
+use App\Http\Resources\Admin\SiteSelectResource;
 use App\Http\Resources\Customer\QuotationSelectResource;
 use App\Models\Admin\Customer;
 use App\Models\Admin\Item;
@@ -70,12 +72,21 @@ class QuotationController extends Controller
         return view($this->viewName . '.form', $this->data);
     }
 
-    public function store(Request $request)
+    public function store(QuotatioStorenRequest $request)
     {
-         dd($request->all());
+        
         $items = $request->items;
         unset($request['items']);
         $request['date'] = Carbon::parse($request['date'])->format('Y-m-d');
+
+        if($request->discount_type == DiscountType::FIXED_AMOUNT){
+            $percentage = ($request->discount / $request->total) * 100;
+            $request['discount_percentage'] = round($percentage,2);
+        }
+        if($request->discount_type == DiscountType::FIXED_AMOUNT){
+            $request['discount'] =  $request->sub_total - $request->total;
+        }
+        // dd( $request['discount'] );
 
         $quotation = Quotation::updateOrCreate(
             ['id' => $request->id],
@@ -115,6 +126,8 @@ class QuotationController extends Controller
         $this->data['btn_route_edit'] = route($this->routeName . '.edit', $quotation);
         $this->data['btn_route_delete'] = route($this->routeName . '.destroy', $quotation);
         $this->data['quotation_number'] = $quotation->quotation_number;
+        $this->data['sites'] = SiteSelectResource::collection($quotation->customer->sites);
+
         return view($this->viewName . '.form', $this->data);
     }
 

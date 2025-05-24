@@ -29,14 +29,14 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Quotation Number"
                                 v-model="form.quotation_number"
-                                disabled
+                                :disabled="update"
                             />
                         </div>
                         <div>
                             <label
                                 for="quotation_number"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Customer</label
+                                >Customer {{ update }} </label
                             >
                             <v-select
                                 label="name"
@@ -45,6 +45,7 @@
                                 :reduce="(customer) => customer.id"
                                 :options="customers"
                                 @update:modelValue="getSitesByCustomer"
+                                :disabled="form.customer_id != '' && update == true"
                             ></v-select>
                         </div>
 
@@ -110,7 +111,7 @@
                             <label
                                 class="block mb-2 text-sm font-medium text-gray-900"
                             >
-                                Payment Remarks
+                                Remarks
                             </label>
                             <textarea
                                 name="remarks"
@@ -349,7 +350,15 @@
                                                         scope="col"
                                                         class="px-4 py-3 text-right"
                                                     >
-                                                        Discount:
+                                                        Discount :
+                                                        <label
+                                                          v-if="
+                                                                form.discount_type ==
+                                                                2
+                                                            "
+                                                        >
+                                                           (%)
+                                                        </label>
                                                         <br />
                                                         <label
                                                             for=""
@@ -492,6 +501,7 @@ export default {
             type: Object,
             default: () => ({}),
         },
+       
     },
     components: {
         vSelect,
@@ -500,7 +510,7 @@ export default {
 
     setup(props) {
         const form = reactive({
-            quotation_number: props.quotationNumber,
+            quotation_number: "",
             customer_id: "",
             site_id: "",
             date: new Date(),
@@ -511,8 +521,9 @@ export default {
             vat: 0,
             total: 0,
             description: "",
-            remarks: "",
+            remarks: "This quotation is valid for a period of 14 days from the date of issue.",
             items: [],
+            id: "",
         });
         const item = reactive({
             item_id: "",
@@ -535,9 +546,10 @@ export default {
             calculateTotal,
         } = useQuotations();
 
-        const getSitesByCustomer = (customerId ) => {
+        const getSitesByCustomer = (customerId) => {
+            // Reset site_id when customer changes
+            form.site_id = "";
             fetchSites(customerId);
-            // form.site_id = "";
         };
 
         const subTotal = computed(() => calculateSubTotal(form.items));
@@ -566,7 +578,9 @@ export default {
             (val) => {
                 if (val && props.quotation) {
                     form.quotation_number =
-                        props.quotation.quotation_number || "";
+                        props.quotation.quotation_number ||  props.quotationNumber;
+                    form.id =
+                        props.quotation.id || "";
                     form.customer_id = props.quotation.customer_id || "";
                     form.site_id = props.quotation.site_id || "";
                     form.date = props.quotation.date
@@ -574,17 +588,19 @@ export default {
                         : new Date();
                     form.sub_total = props.quotation.sub_total || 0;
                     form.discount = props.quotation.discount || "";
+                    form.discount_percentage = props.quotation.discount_percentage || "";
                     form.discount_type = props.quotation.discount_type || "";
                     form.vat = props.quotation.vat || 0;
                     form.total = props.quotation.total || 0;
                     form.description = props.quotation.description || "";
-                    form.remarks = props.quotation.remarks || "";
+                    form.remarks = props.quotation.remarks || "This quotation is valid for a period of 14 days from the date of issue.";
                     form.items = props.quotation.items
                         ? JSON.parse(JSON.stringify(props.quotation.items))
                         : [];
-
+                    
+                    // Load sites if customer_id exists
                     if (form.customer_id) {
-                        getSitesByCustomer(form.customer_id);
+                        fetchSites(form.customer_id);
                     }
                 }
             },
@@ -593,6 +609,9 @@ export default {
 
         const setProductDetails = (itemId) => {
             fetchProductDetails(itemId, props.products, item);
+        };
+        const loadSitesUpdate = (sites) => {
+            loadSiteData(sites);
         };
 
         // Add item to the form
@@ -665,6 +684,7 @@ export default {
             formatCurrency,
             formatPriceInput,
             validateQuantity,
+            loadSitesUpdate,
         };
     },
 };
