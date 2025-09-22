@@ -5,7 +5,7 @@ namespace App\Http\Resources\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class QuotationSelectResource extends JsonResource
+class InvoiceSelectResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,7 @@ class QuotationSelectResource extends JsonResource
         return
         [
             'id' => $this->id,
-            'quotation_number' => $this->quotation_number,
+            'invioice_number' => $this->invioice_number,
             'customer_id' => $this->customer_id,
             'site_id' => intval($this->site_id) ?? '',
             'date' => $this->date,
@@ -28,8 +28,9 @@ class QuotationSelectResource extends JsonResource
             'total' => $this->total,
             'description' => $this->description,
             'remarks' => $this->remarks,
-            'items' => QuotationItemSelectResource::collection($this->items) ?: [],
-            'expenses' => QuotationExpenseSelectResource::collection($this->expenses) ?: [],
+            'quotation_id' => $this->quotation_id,
+            'items' => InvoiceItemSelectResource::collection($this->items) ?: [],
+            'expenses' => InvoiceExpenseSelectResource::collection($this->expenses) ?: [],
         ];
     }
 }

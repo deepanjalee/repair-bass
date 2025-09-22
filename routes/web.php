@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\QuotationController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,5 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
         Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'pdf'])->name('quotations.pdf');
         Route::resource('quotations', QuotationController::class);
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf'])->name('invoices.pdf');
+        Route::resource('invoices', InvoiceController::class);
     });
 });

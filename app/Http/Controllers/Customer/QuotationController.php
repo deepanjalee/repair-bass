@@ -8,10 +8,12 @@ use App\Http\Requests\QuotatioStorenRequest;
 use App\Http\Resources\Admin\CustomerSelectResourse;
 use App\Http\Resources\Admin\ItemSelectResource;
 use App\Http\Resources\Admin\SiteSelectResource;
+use App\Http\Resources\Customer\QuotationItemSelectResource;
 use App\Http\Resources\Customer\QuotationSelectResource;
 use App\Models\Admin\Customer;
 use App\Models\Admin\Item;
 use App\Models\Customer\Quotation;
+use App\Models\Customer\QuotationExpense;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Customer\QuotationItem;
@@ -74,9 +76,11 @@ class QuotationController extends Controller
 
     public function store(QuotatioStorenRequest $request)
     {
-        
+
         $items = $request->items;
+        $expenses = $request->expenses;
         unset($request['items']);
+        unset($request['expenses']);
         $request['date'] = Carbon::parse($request['date'])->format('Y-m-d');
 
         if($request->discount_type == DiscountType::FIXED_AMOUNT){
@@ -88,13 +92,16 @@ class QuotationController extends Controller
         }
         // dd( $request['discount'] );
 
+        //   dd($expenses);
         $quotation = Quotation::updateOrCreate(
             ['id' => $request->id],
             $request->all()
         );
 
+
         foreach ($items as $key => $item) {
             $itemId = array_key_exists('id', $item) ? $item['id'] : null;
+            // dd( $item);
             $quotationItem = QuotationItem::updateOrCreate(
                 ['id' => $itemId],
                 [
@@ -103,6 +110,18 @@ class QuotationController extends Controller
                     'quantity' => $item['quantity'],
                     'total' => $item['total'],
                     'description' => $item['description'] ?? null,
+                    'quotation_id' => $quotation->id,
+                ]
+            );
+        }
+        foreach ($expenses as $key => $expense) {
+            $expenseId = array_key_exists('id', $expense) ? $expense['id'] : null;
+            $quotationExpense = QuotationExpense::updateOrCreate(
+                ['id' => $expenseId],
+                [
+                    'name' => $expense['name'],
+                    'price' => $expense['price'],
+                    'description' => $expense['description'] ?? null,
                     'quotation_id' => $quotation->id,
                 ]
             );
@@ -144,9 +163,55 @@ class QuotationController extends Controller
     }
     public function pdf(Quotation $quotation)
     {
-        // dd($quotation);
         $this->data['quotation'] = $quotation;
         return view($this->viewName . '.pdf', $this->data);
-        // dd($quotation);
     }
+
+     public function deleteExpense(Request $request)
+    {
+        $quotationExpense = QuotationExpense::find($request->id);
+      
+        $quotationId = $quotationExpense->quotation_id;
+     
+      
+        //delete the expense
+        if ($quotationExpense) {
+            $quotationExpense->delete();
+        }
+
+         $quotationExpenses = QuotationExpense::where('quotation_id', $quotationId)->get();
+       
+        //return invoice expenses
+        return response()->json([
+            'status' => true,
+            'message' => 'Expense deleted successfully',
+            'data' => $quotationExpenses,
+        ], 200);
+
+   
+    }
+     public function deleteItem(Request $request)
+    {
+        $quotationItem = QuotationItem::find($request->id);
+      
+        $quotationId = $quotationItem->quotation_id;
+     
+      
+        //delete the Item
+        if ($quotationItem) {
+            $quotationItem->delete();
+        }
+
+         $quotationItems = QuotationItem::where('quotation_id', $quotationId)->get();
+       
+        //return invoice Items
+        return response()->json([
+            'status' => true,
+            'message' => 'Item deleted successfully',
+            'data' => QuotationItemSelectResource::collection($quotationItems),
+        ], 200);
+
+   
+    }
+
 }

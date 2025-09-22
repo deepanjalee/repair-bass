@@ -8,27 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <style>
-        /* @media print {
-            @page {
-                margin: 20mm 10mm;
-            }
 
-            body {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                margin-bottom: 30mm;
-            }
-
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                text-align: center;
-                font-size: 12px;
-                color: #888;
-            }
-        } */
         @media print {
             @page {
                 margin: 20mm 10mm 30mm 10mm;
@@ -55,7 +35,6 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            margin: 0;
             padding: 0;
             background-color: #fff;
             color: #000;
@@ -152,15 +131,6 @@
             background-color: #dfdee1 !important;
             border: 2px solid white !important;
         }
-
-        .tag-line {
-            margin-top: -10px;
-            margin-bottom: -20px;
-        }
-
-        .mbr-2 {
-            margin-bottom: -2px;
-        }
     </style>
     <script>
         window.print();
@@ -173,7 +143,7 @@
         <!-- Header with logo -->
         <div class="header">
             <div class="company-info">
-                <h1>QUOTATION</h1>
+                <h1>INVOICE</h1>
                 <b>Repair Bass PVT LTD</b>
                 <p>No:7/A,St.michel Rd, </p>
                 <p>Hadigama,Piliyandala </p>
@@ -181,26 +151,22 @@
             </div>
             <div class="logo">
                 <img src="{{ asset('img/repair-bass.png') }}" alt="Company Logo" style="width:150px;height: 150px;" />
-                <p class="tag-line"><b>Rebuilding with Excellence</b></p>
             </div>
         </div>
 
         <!-- Invoice details -->
         <div class="details">
             <div class="left">
-                <p class="mbr-2"><strong>Bill To:</strong></p>
-                <p class="mbr-2"> <strong>Customer: </strong> Mr/MRs/Miss .
-                    {{ optional($quotation->customer)->full_name }}</p>
-                <p class="mbr-2"><strong>Site: </strong>{{ optional($quotation->site)->name }}</p>
-                <p class="mbr-2"><strong>Address: </strong>{{ optional($quotation->site)->address }}</p>
-                <p class="mbr-2"><strong>Mobile: </strong>{{ optional($quotation->customer)->mobile }}</p>
+                <p><strong>Bill To:</strong></p>
+                <p> <strong>Customer: </strong> Mr/MRs/Miss . {{ optional($invoice->customer)->full_name }}</p>
+                <p><strong>Site: </strong>{{ optional($invoice->site)->name }}</p>
+                <p><strong>Address: </strong>{{ optional($invoice->site)->address }}</p>
+                <p><strong>Mobile: </strong>{{ optional($invoice->customer)->mobile }}</p>
             </div>
             <div class="right">
-                <p class="mbr-2"><strong>Quotation Details:</strong></p>
-                <p class="mbr-2"><strong>Quotation No:</strong> {{ $quotation->quotation_number }}</p>
-                <p class="mbr-2"><strong>Date:</strong> {{ $quotation->date }} </p>
-                <p class="mbr-2"><strong>Due
-                        Date:</strong>{{ \Carbon\Carbon::parse($quotation->date)->addDays(14)->format('Y-m-d') }} </p>
+                <p><strong>Invoice Details:</strong></p>
+                <p><strong>Invoice No:</strong> {{ $invoice->invoice_number }}</p>
+                <p><strong>Date:</strong> {{ $invoice->date }} </p>
             </div>
             <div class="clear"></div>
         </div>
@@ -221,7 +187,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($quotation->items as $item)
+                @forelse ($invoice->items as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->item->item_name }}
@@ -252,8 +218,8 @@
                 </thead>
 
 
-
-                @forelse ($quotation->expenses as $expense)
+                
+                @forelse ($invoice->expenses as $expense)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td colspan="3">{{ $expense->name }}
@@ -266,42 +232,33 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center">No cost found</td>
+                        <td colspan="5" class="text-center">No items found</td>
                     </tr>
                 @endforelse
 
-            </tbody>
-        </table>
-        <table>
+                <tr class="light-row">
+                    <td colspan="4" style="text-align: right;"><strong>Subtotal:</strong></td>
+                    <td style="text-align: right;"><strong> {{ number_format($invoice->sub_total, 2) }} </strong>
+                    </td>
+                </tr>
+                <tr class="light-row">
+                    <td colspan="4" style="text-align: right;"><strong>Discount:</strong> </td>
+                    <td style="text-align: right;"><strong>{{ number_format($invoice->discount, 2) }}</strong> </td>
+                </tr>
+                <tr class="light-row">
+                    <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
+                    <td style="text-align: right;"><strong>{{ number_format($invoice->total, 2) }}</strong> </td>
+                </tr>
 
-            <tr class="light-row">
-                <td colspan="4" style="text-align: right;"><strong>Subtotal:</strong></td>
-                <td style="text-align: right;"><strong> {{ number_format($quotation->sub_total, 2) }} </strong>
-                </td>
-            </tr>
-            <tr class="light-row">
-                <td colspan="4" style="text-align: right;"><strong>Discount:</strong> </td>
-                <td style="text-align: right;"><strong>{{ number_format($quotation->discount, 2) }}</strong> </td>
-            </tr>
-            <tr class="light-row">
-                <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                <td style="text-align: right;"><strong>{{ number_format($quotation->total, 2) }}</strong> </td>
-            </tr>
-
-            <tr>
-                <td colspan="5"><strong>Remarks:</strong>
-                    <span style="color: #ff5f5f;"> {{ $quotation->remarks }} <span>
-                </td>
-
-            </tr>
-            @if ($quotation->description != null)
                 <tr>
-                    <td colspan="5"><strong>Description:</strong>
-                        <span style="color: #ff5f5f;"> {{ $quotation->description }} <span>
+                    <td colspan="5"><strong>Remarks:</strong>
+                        <span style="color: #ff5f5f;"> {{ $invoice->remarks }} <span>
                     </td>
 
                 </tr>
-            @endif
+            </tbody>
+
+
 
         </table>
 

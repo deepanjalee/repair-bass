@@ -1,8 +1,8 @@
 import { ref, watch } from "vue";
 import axios from "axios";
 export default function useQuotations() {
-    const quotations = ref([]);
-    const quotation = ref([]);
+    const invoices = ref([]);
+    const invoice = ref([]);
     const errors = ref("");
     const sites = ref([]);
     const loading = ref(false);
@@ -13,10 +13,12 @@ export default function useQuotations() {
     const onSubmit = async (data) => {
         errors.value = "";
         try {
-            const response = await axios.post("/api/customer/quotations", data);
+            const response = await axios.post("/api/customer/invoices", data);
+            console.log();
+
             if (response.data.status && response.data.redirect_url) {
-                alert("Quotation created successfully.");
                 window.location.href = response.data.redirect_url;
+                alert("Invoice created successfully.");
             }
         } catch (e) {
             if (e.response.status === 422) {
@@ -59,6 +61,7 @@ export default function useQuotations() {
             0
         );
         return itemTotal + expenseTotal;
+        // return items.reduce((sum, item) => sum + Number(item.total || 0), 0);
     };
 
     const calculateTotal = (form) => {
@@ -87,7 +90,6 @@ export default function useQuotations() {
         if (existingItem) {
             // If exists, update the quantity and total
             existingItem.price = item.price; // Add new quantity (or add 1 if undefined)
-            existingItem.description = item.description; // Add new quantity (or add 1 if undefined)
             existingItem.quantity = item.quantity; // Add new quantity (or add 1 if undefined)
             existingItem.total = item.total;
         } else {
@@ -110,6 +112,10 @@ export default function useQuotations() {
         item.total = 0;
         item.description = "";
 
+        //calculate form sub total
+        // form.sub_total = form.items.reduce((acc, item) => {
+        //     return acc + (item.price * item.quantity);
+        // }, 0);
     };
 
     const addExpenseDetails = (expense, form) => {
@@ -122,7 +128,9 @@ export default function useQuotations() {
         expense.name = "";
         expense.price = null;
         expense.description = null;
+
     };
+
     const removeExpenseDetails = async (indexE, form) => {
         const expense = form.expenses[indexE];
         if (!expense.id) {
@@ -133,32 +141,31 @@ export default function useQuotations() {
             try {
                 // Send request to backend (adjust URL as needed)
                 const response = await axios.post(
-                    "/api/customer/quotation/expenses/delete",
+                    "/api/customer/invoice/expenses/delete",
                     { id: expense.id }
                 );
                 form.expenses = response.data.data;
                 alert("Expense deleted successfully.");
             } catch (error) {
-                // console.error("Failed to delete expense:", error);
+                console.error("Failed to delete expense:");
             }
         }
     };
+
     const removeItemDetails = async (index, form) => {
         const item = form.items[index];
         if (!item.id) {
             // if id is not available, remove it
             form.items.splice(index, 1);
-           
             alert("Item deleted successfully.");
         } else {
             try {
                 // Send request to backend (adjust URL as needed)
                 const response = await axios.post(
-                    "/api/customer/quotation/items/delete",
+                    "/api/customer/invoice/items/delete",
                     { id: item.id }
                 );
                 form.items = response.data.data;
-               
                 alert("Item deleted successfully.");
             } catch (error) {
                 console.error("Failed to delete expense:");
@@ -168,14 +175,13 @@ export default function useQuotations() {
 
     return {
         onSubmit,
-        quotations,
-        quotation,
+        invoices,
+        invoice,
         errors,
         fetchSites,
         sites,
         loading,
         item,
-        expense,
         fetchProductDetails,
         addItemDetails,
         addExpenseDetails,

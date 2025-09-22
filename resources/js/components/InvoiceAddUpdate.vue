@@ -15,26 +15,26 @@
                     </a>
                 </div>
 
-                <form @submit.prevent="saveQuotation">
+                <form @submit.prevent="saveInvoice">
                     <div class="grid grid-cols-2 gap-4 mt-5">
                         <div>
                             <label
-                                for="quotation_number"
+                                for="invoice_number"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Quotation Number</label
+                                >Invoice Number</label
                             >
                             <input
                                 type="text"
-                                id="quotation_number"
+                                id="invoice_number"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Quotation Number"
-                                v-model="form.quotation_number"
+                                placeholder="Invoice Number"
+                                v-model="form.invoice_number"
                                 :disabled="update"
                             />
                         </div>
                         <div>
                             <label
-                                for="quotation_number"
+                                for="invoice_number"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Customer {{ update }}
                             </label>
@@ -66,7 +66,7 @@
                         </div>
                         <div>
                             <label
-                                for="quotation_number"
+                                for="invoice_number"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Discount Type</label
                             >
@@ -251,9 +251,6 @@
                                                     <td colspan="4">
                                                         <div class="mx-4 my-2">
                                                             <textarea
-                                                                v-model="
-                                                                    item.description
-                                                                "
                                                                 name="description"
                                                                 cols="30"
                                                                 rows="3"
@@ -262,9 +259,7 @@
                                                             ></textarea>
                                                         </div>
                                                     </td>
-                                                    <td
-                                                        class="flex items-center justify-end px-4 py-3"
-                                                    >
+                                                    <td>
                                                         <button
                                                             type="button"
                                                             class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -443,9 +438,7 @@
                                                             ></textarea>
                                                         </div>
                                                     </td>
-                                                    <td
-                                                        class="flex items-center justify-end px-4 py-3"
-                                                    >
+                                                    <td>
                                                         <button
                                                             type="button"
                                                             class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -650,7 +643,6 @@
                             </div>
                         </section>
                     </div>
-
                     <div>
                         <button
                             type="submit"
@@ -667,7 +659,7 @@
 <script>
 import { reactive, computed, watch } from "vue";
 
-import useQuotations from "../components/composables/quotations";
+import useInvoice from "./composables/invoices";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vue3-datepicker";
@@ -679,7 +671,7 @@ export default {
             type: String,
             required: true,
         },
-        quotationNumber: {
+        invoiceNumber: {
             type: String,
             required: true,
         },
@@ -704,7 +696,7 @@ export default {
             required: true,
         },
 
-        quotation: {
+        invoice: {
             type: Object,
             default: () => ({}),
         },
@@ -716,7 +708,7 @@ export default {
 
     setup(props) {
         const form = reactive({
-            quotation_number: "",
+            invoice_number: "",
             customer_id: "",
             site_id: "",
             date: new Date(),
@@ -727,8 +719,7 @@ export default {
             vat: 0,
             total: 0,
             description: "",
-            remarks:
-                "This quotation is valid for a period of 14 days from the date of issue.",
+            remarks: "",
             items: [],
             expenses: [],
             id: "",
@@ -741,6 +732,7 @@ export default {
             total: 0,
             description: "",
         });
+
         const expense = reactive({
             name: "",
             price: null,
@@ -760,7 +752,7 @@ export default {
             removeItemDetails,
             calculateSubTotal,
             calculateTotal,
-        } = useQuotations();
+        } = useInvoice();
 
         const getSitesByCustomer = (customerId) => {
             // Reset site_id when customer changes
@@ -794,32 +786,29 @@ export default {
         watch(
             () => props.update,
             (val) => {
-                if (val && props.quotation) {
-                    form.quotation_number =
-                        props.quotation.quotation_number ||
-                        props.quotationNumber;
-                    form.id = props.quotation.id || "";
-                    form.customer_id = props.quotation.customer_id || "";
-                    form.site_id = props.quotation.site_id || "";
-                    form.date = props.quotation.date
-                        ? new Date(props.quotation.date)
+                if (val && props.invoice) {
+                    form.invoice_number =
+                        props.invoice.invoice_number || props.invoiceNumber;
+                    form.id = props.invoice.id || "";
+                    form.customer_id = props.invoice.customer_id || "";
+                    form.site_id = props.invoice.site_id || "";
+                    form.date = props.invoice.date
+                        ? new Date(props.invoice.date)
                         : new Date();
-                    form.sub_total = props.quotation.sub_total || 0;
-                    form.discount = props.quotation.discount || "";
+                    form.sub_total = props.invoice.sub_total || 0;
+                    form.discount = props.invoice.discount || "";
                     form.discount_percentage =
-                        props.quotation.discount_percentage || "";
-                    form.discount_type = props.quotation.discount_type || "";
-                    form.vat = props.quotation.vat || 0;
-                    form.total = props.quotation.total || 0;
-                    form.description = props.quotation.description || "";
-                    form.remarks =
-                        props.quotation.remarks ||
-                        "This quotation is valid for a period of 14 days from the date of issue.";
-                    form.items = props.quotation.items
-                        ? JSON.parse(JSON.stringify(props.quotation.items))
+                        props.invoice.discount_percentage || "";
+                    form.discount_type = props.invoice.discount_type || "";
+                    form.vat = props.invoice.vat || 0;
+                    form.total = props.invoice.total || 0;
+                    form.description = props.invoice.description || "";
+                    form.remarks = props.invoice.remarks || " ";
+                    form.items = props.invoice.items
+                        ? JSON.parse(JSON.stringify(props.invoice.items))
                         : [];
-                    form.expenses = props.quotation.expenses
-                        ? JSON.parse(JSON.stringify(props.quotation.expenses))
+                    form.expenses = props.invoice.expenses
+                        ? JSON.parse(JSON.stringify(props.invoice.expenses))
                         : [];
 
                     // Load sites if customer_id exists
@@ -842,17 +831,20 @@ export default {
         const addItem = () => {
             addItemDetails(item, form);
         };
+
         const addExpense = () => {
             addExpenseDetails(expense, form);
         };
-        const removeExpense = (indexE) => {
-            removeExpenseDetails(indexE, form);
-        };
+
         const removeItem = (index) => {
             removeItemDetails(index, form);
         };
 
-        const saveQuotation = async () => {
+        const removeExpense = (indexE) => {
+            removeExpenseDetails(indexE, form);
+        };
+
+        const saveInvoice = async () => {
             await onSubmit({ ...form });
         };
 
@@ -906,7 +898,7 @@ export default {
 
         return {
             form,
-            saveQuotation,
+            saveInvoice,
             getSitesByCustomer,
             sites,
             loading,

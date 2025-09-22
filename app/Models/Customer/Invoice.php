@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Quotation extends Model
+class Invoice extends Model
 {
     use HasFactory,SoftDeletes;
+
     protected $fillable = [
-        'quotation_number',
+        'invoice_number',
         'customer_id',
         'site_id',
         'date',
@@ -26,29 +27,31 @@ class Quotation extends Model
         'total',
         'description',
         'remarks',
+        'quotation_id',
     ];
 
-    public static function generateNextQuotationNumber()
+    public static function generateNextInvoiceNumber()
     {
-        $latestQuotation = self::orderBy('quotation_number', 'desc')->first();
+        $latestInvoice = self::orderBy('id', 'desc')->first();
 
 
-        if ($latestQuotation) {
-            $lastNumber = (int) $latestQuotation->id;
+        if ($latestInvoice) {
+            $lastNumber = (int) $latestInvoice->id;
             $nextNumber = $lastNumber + 1;
         } else {
             $nextNumber = 100;
         }
-        return 'Q' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        // dd('INV' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT) );
+        return 'INV' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
-    public function items(): HasMany
+      public function items(): HasMany
     {
-        return $this->hasMany(QuotationItem::class);
+        return $this->hasMany(InvoiceItem::class);
     }
-    public function expenses(): HasMany
+      public function expenses(): HasMany
     {
-        return $this->hasMany(QuotationExpense::class);
+        return $this->hasMany(InvoiceExpense::class);
     }
 
     public function customer(): BelongsTo
@@ -60,9 +63,9 @@ class Quotation extends Model
     {
         return $this->belongsTo(Site::class);
     }
-    public function invoice(): BelongsTo
+    public function quotation(): BelongsTo
     {
-        return $this->belongsTo(Invoice::class, 'id', 'quotation_id');
+        return $this->belongsTo(Quotation::class);
     }
-}
 
+}

@@ -26,8 +26,11 @@
                                     <th scope="col" class="px-6 py-3">
                                         #
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
+                                    {{-- <th scope="col" class="px-6 py-3">
                                         Q.Number
+                                    </th> --}}
+                                    <th scope="col" class="px-6 py-3">
+                                        Inv.Number
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         Customer
@@ -58,11 +61,15 @@
                                         <td class="px-6 py-4">
                                             {{ $object->id ?? '' }}
                                         </td>
+                                        {{-- <td class="px-6 py-4">
+                                            {{ ucfirst($object->quotation->quotation_number) ?? '' }}
+                                        </td> --}}
                                         <td class="px-6 py-4">
-                                            {{ ucfirst($object->quotation_number) ?? '' }}
+                                            {{ ucfirst($object->invoice_number) ?? '' }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ $object->customer->full_name ?? '' }}
+                                            {{ $object->customer->full_name ?? '' }} (QUO:
+                                            {{ ucfirst($object->quotation->quotation_number) ?? '' }})
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ $object->site->name ?? '' }}
@@ -81,29 +88,12 @@
                                         </td>
                                         <td class="px-6 py-4">
 
+
                                             <div class="flex">
-                                                
-                                                @if ($object->invoice == null)
-                                                    <a type="button"
-                                                        href="{{ route('customer.invoices.create', ['quotation' => $object->id]) }}"
-                                                        class="text-white text-gray-900 bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-[#F7BE38]/50 font-medium rounded-lg text-sm px-2 py-2 text-center inline-flex items-center dark:focus:ring-[#F7BE38]/50 me-2 mb-2">
-
-                                                        <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true"
-                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            fill="currentColor" viewBox="0 0 24 24">
-                                                            <path fill-rule="evenodd"
-                                                                d="M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11.5c.07 0 .14-.007.207-.021.095.014.193.021.293.021h2a2 2 0 0 0 2-2V7a1 1 0 0 0-1-1h-1a1 1 0 1 0 0 2v11h-2V5a2 2 0 0 0-2-2H5Zm7 4a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h.5a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1Zm-6 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1ZM7 6a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm1 3V8h1v1H8Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-
-
-                                                    </a>
+                                                @if ($object->invoice)
                                                 @endif
-
-
-                                                <a type="button"
-                                                 target="_blank"
-                                                    href="{{ route('customer.quotations.pdf', $object->id) }}"
+                                                <a type="button" target="_blank"
+                                                    href="{{ route('customer.invoices.pdf', $object->id) }}"
                                                     class="text-white text-gray-900 bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-[#F7BE38]/50 font-medium rounded-lg text-sm px-2 py-2 text-center inline-flex items-center dark:focus:ring-[#F7BE38]/50 me-2 mb-2">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                         fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">

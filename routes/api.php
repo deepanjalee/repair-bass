@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Customer\QuotationController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
+    Route::post('/quotation/expenses/delete', [QuotationController::class, 'deleteExpense']);
+    Route::post('/quotation/items/delete', [QuotationController::class, 'deleteItem']);
     Route::post('/quotations', [QuotationController::class, 'store']);
+    Route::post('/invoice/expenses/delete', [InvoiceController::class, 'deleteExpense']);
+    Route::post('/invoice/items/delete', [QuotationController::class, 'deleteItem']);
+    Route::post('/invoices', [InvoiceController::class, 'store']);
 });
 Route::get('/admin/customer/sites/{customer_id}', [SiteController::class, 'getSitesByCustomerId']);
